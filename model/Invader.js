@@ -1,45 +1,24 @@
-class Invader {
+import Block from "./Block.js";
+
+class Invader extends Block{
   constructor(x,y,velocity) {
-    this.x = x;
-    this.y = y;
+    super(x,y,40,40);
     this.velocity = velocity;
     const img = new Image(50, 50);
     img.src = "./assets/invader.png";
     this.img = img;
-    this.width = 40;
-    this.height = 40;
-    this.visible = true;
-  }
-
-  move() {
-    this.x += this.dx;
-    this.y += this.dy;
-  }
-
-  draw(ctx) {
-    if (this.visible) {
-      ctx.beginPath();
-    //ctx.rect(this.x, this.y, this.width, this.height);
-      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-    //ctx.fillStyle = this.color;
-    //ctx.fill();
-      ctx.closePath();
-    }
+    this.shake = 0;
   }
 
   update() {
-    //this.draw(ctx);
-    //this.y = 30;
     this.y += this.velocity;
-  }
-
-  colides(projectile) {
-    if (this.visible && this.intersects(projectile)) {
-      this.visible = false;
-      return true;
+    if (this.shake % 10 == 0){
+      this.x += 2;
+    } else if (this.shake % 5 == 0) {
+      this.x -= 2;
     }
-    return false;
-  } 
+    this.shake++;
+  }
 
   // assume other has {x, y, width, height}
   intersects(other) {
@@ -66,6 +45,11 @@ class Invader {
       (th < ty || th > ry)
     );
   }
+  draw(ctx) {
+    ctx.beginPath();
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    ctx.closePath();
+}
 
 }
 

@@ -1,22 +1,23 @@
 import "./style.css";
 import Projectile from "./model/Projectile.js";
 import Invader from "./model/Invader.js";
-import Block from "./model/Block.js";
-//import Brick from "./model/Brick.js";
+import Tank from "./model/Tank.js";
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 const projectiles = [];
 const invaders = [];
 
-invaders.push(new Invader(20, 60, 1));
 const img = new Image(50, 50);
 img.src = "./assets/tank.png";
 const invader = new Image(50, 50);
 invader.src = "./assets/invader.png";
+var music = new Audio('./assets/music.mpeg');
+var fire = new Audio('./assets/shoot.wav');
+var hit = new Audio('./assets/explosion.wav');
+music.loop = true;
 
-//const tank = new Block(img, 50, 50);
-const block = new Block(
+const tank = new Tank(
   canvas.width / 2 - 25,
   canvas.height - 60,
 );
@@ -24,69 +25,80 @@ let score = 0;
 let remain = 10;
 let isGameOver = false;
 let gameOn = false;
-let time = 0;
+
 addEventListener("keydown", ({key}) => {
   switch(key){
     case ' ':
-      projectiles.push(new Projectile(block.x + 5, block.y, 2));
-      remain--;
+      if (remain >0){
+        projectiles.push(new Projectile(tank.x + 15, tank.y, 2));
+        fire.play();
+        remain--;
+      }
   }
 })
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  block.draw(ctx);
-  if (block.x != canvas.width / 2 - 25) {
+  tank.draw(ctx);
+  if (tank.x != canvas.width / 2 - 25) {
     gameOn = true;
+    music.play();
   }
   console.log(gameOn);
 
-  block.move(canvas.width);
+  tank.move(canvas.width);
   ctx.font = "16px Arial";
   ctx.fillStyle = "#0095DD";
   
   ctx.fillText("Invaders shot down: " + score, 8, 20);
   ctx.fillText("Missiles remaining: " + remain, 8, 40);
-  projectiles.forEach((projectile) => {
+  for( var i = 0; i < projectiles.length; i++){
+    let projectile = projectiles[i];
     projectile.draw(ctx);
     projectile.update();
     // out of vision
-    if (projectile.y == -10 && projectile.visible) {
+    if (projectile.y == -10) {
       remain++;
+      projectiles.splice(i, 1); 
     }
-  });
-  const randomNumber1 = Math.floor(Math.random() * canvas.width - 25);
-  const randomNumber2 = Math.floor(Math.random() * canvas.width - 25);
+  }
+  if (gameOn) {
+  let randomNumber1 = Math.floor(Math.random() * canvas.width - 25);
+  let randomNumber2 = Math.floor(Math.random() * canvas.width - 25);
   if (randomNumber1 == randomNumber2){
-    const random = Math.floor(Math.random() * 5);
+    let random = Math.floor(Math.random() * 5);
     let speed = 1;
     if (random == 2 || random == 3) {
       speed = 3;
     }
     // avoid out of left limit
-    if (randomNumber1 <20){
+    if (randomNumber1 < 20){
       randomNumber1 += 20;
     }
     invaders.push(new Invader(randomNumber1, 0, speed));
   }
-  invaders.forEach((invader) => {
+}
+  for( var i = 0; i < invaders.length; i++){ 
+  //invaders.forEach((invader) => {
+    let invader = invaders[i];
     invader.draw(ctx);
     invader.update();
-    projectiles.forEach((projectile) => {
-      if (invader.colides(projectile)){
+    for( var j = 0; j < projectiles.length; j++){ 
+      let projectile = projectiles[j];
+      if (invader.intersects(projectile)){
         score++;
-        projectile.visible = false;
+        hit.play();
+        invaders.splice(i, 1); 
+        projectiles.splice(j, 1); 
         remain++;
       }
-    });
-    if (invader.y == canvas.height && invader.visible) { 
-      isGameOver = true;
     }
-  });
-  //paddle.move(canvas.width);
-  //ctx.drawImage(img, canvas.width / 2 - 25, canvas.height - 60, 50, 50);
-  //ctx.drawImage(invader, canvas.width / 2 - 25, canvas.height - 100, 50, 50);
-  //window.requestAnimationFrame(draw);
+    if (invader.y == canvas.height) { 
+      isGameOver = true;
+      music.pause();
+    }
+  }
+
   if (!isGameOver) {
     window.requestAnimationFrame(draw);
   } else {
