@@ -5,7 +5,8 @@ class Block {
       this.width = width;
       this.height = height;
     }
-  
+    
+    // draw image
     draw(ctx) {
         ctx.beginPath();
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);

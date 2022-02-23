@@ -1,8 +1,8 @@
 import Block from "./Block.js";
 
 class Invader extends Block{
-  constructor(x,y,velocity) {
-    super(x,y,40,40);
+  constructor(x, y , velocity) {
+    super(x, y, 40, 40);
     this.velocity = velocity;
     const img = new Image(50, 50);
     img.src = "./assets/invader.png";
@@ -12,6 +12,7 @@ class Invader extends Block{
 
   update() {
     this.y += this.velocity;
+    // make the invader jiggles
     if (this.shake % 10 == 0){
       this.x += 2;
     } else if (this.shake % 5 == 0) {
@@ -45,11 +46,6 @@ class Invader extends Block{
       (th < ty || th > ry)
     );
   }
-  draw(ctx) {
-    ctx.beginPath();
-    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-    ctx.closePath();
-}
 
 }
 

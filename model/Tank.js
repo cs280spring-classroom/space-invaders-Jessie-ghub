@@ -8,6 +8,7 @@ class Tank extends Block{
         this.img = img;
         this.dx = 0;
         this.dy = 0;
+        // handle right and left shift
         document.addEventListener("keydown", this.keyDownHandler.bind(this));
         document.addEventListener("keyup", this.keyUpHandler.bind(this));
       }
@@ -31,6 +32,7 @@ class Tank extends Block{
       move(canvasWidth) {
         this.x += this.dx;
         this.y += this.dy;
+        // avoid out of boundary
         if (this.x < 0) {
           this.x = 0;
         } else if (this.x + this.width > canvasWidth) {
