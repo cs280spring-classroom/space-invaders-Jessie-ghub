@@ -71,14 +71,18 @@ class Game {
 		// set invaders
 		if (gameOn) {
 			// make invaders appear at random intervals
-			let randomNumber1 = Math.floor(Math.random() * this.width - 45);
-			let randomNumber2 = Math.floor(Math.random() * this.width - 45);
+			let randomNumber1 = Math.floor(Math.random() * this.width);
+			let randomNumber2 = Math.floor(Math.random() * this.width);
 			if (randomNumber1 > randomNumber2 - 2 && randomNumber1 < randomNumber2) {
 				let speed = 1;
 				// make some faster than others
 				let random = Math.floor(Math.random() * 5);
 				if (random == 2 || random == 3) {
 					speed = 3;
+				}
+				// make sure it's in view
+				if (randomNumber1 > this.width - 45) {
+					randomNumber1 -= 45;
 				}
 				invaders.push(new Invader(randomNumber1, 0, speed));
 			}

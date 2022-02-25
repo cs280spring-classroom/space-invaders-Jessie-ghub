@@ -1,6 +1,7 @@
 import './style.css';
 import Game from './model/Game.js';
 
+// deployed app: https://holdurfire-itsaunicorn.netlify.app/
 const img = new Image(50, 50);
 img.src = './assets/tank.png';
 const canvas = document.getElementById('myCanvas');
